@@ -5,18 +5,18 @@ class ContactsController < ApplicationController
   def index
     @contacts = Contact.all
 
-    render json: @contacts
+    render json: @contacts #, methods: :birthdate_br #[:hello, :i18n]
   end
 
   # GET /contacts/1
   def show
-    render json: @contact
+    render json: @contact.to_br , include: :kind
   end
 
   # POST /contacts
   def create
     @contact = Contact.new(contact_params)
-
+    config.file_watcher = ActiveSupport::FileUpdateChecker
     if @contact.save
       render json: @contact, status: :created, location: @contact
     else
@@ -46,6 +46,6 @@ class ContactsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def contact_params
-      params.require(:contact).permit(:name, :email, :birthdate)
+      params.require(:contact).permit(:name, :email, :birthdate, :kind_id)
     end
 end
